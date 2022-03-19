@@ -1,0 +1,12 @@
+version: '3'
+services:
+  tmp:
+    build: ./Dockerfile
+    container_name: tmp
+    hostname: tmp
+    shm_size: '28gb'
+    volumes:
+      - ./:/workspace:cached
+    environment:
+      TZ: Asia/Tokyo
+    tty: true
