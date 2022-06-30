@@ -1,0 +1,53 @@
+version: '3'
+services:
+    webpage:
+        container_name: webpage
+        build: ./webpage
+        command: sh /startup.sh
+        environment:
+            TZ: 'Asia/Tokyo'
+        volumes:
+            - ./src/webpage:/code
+            - ./static:/static
+            - ./log:/log
+        expose:
+            - '8001'
+            - '3001'
+        ports:
+            - '8000:8000'
+        depends_on:
+            - db
+    db:
+        container_name: db_webpage
+        image: mysql:5.7
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+        ports:
+            - '3306:3306'
+        hostname: db
+        environment:
+            MYSQL_DATABASE: webpage
+            MYSQL_USER: root
+            MYSQL_PASSWORD: root
+            MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+            TZ: Asia/Tokyo
+        volumes:
+            - ./mysql:/var/lib/mysql
+            - ./sql:/docker-entrypoint-initdb.d
+    nginx:
+        container_name: nginx_webpage
+        image: nginx
+        ports:
+            - '80:8000'
+        volumes:
+            - ./nginx/conf:/etc/nginx/conf.d
+            - ./nginx/uwsgi_params:/etc/nginx/uwsgi_params
+            - ./static:/static
+            - ./log:/log
+        depends_on:
+            - webpage
+    redis:
+        container_name: redis_webpage
+        image: redis:5
+        hostname: redis
+        expose:
+            - '6379'
