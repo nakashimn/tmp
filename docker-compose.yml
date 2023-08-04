@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 services:
   tmp:
     build: ./Dockerfile
@@ -6,7 +6,7 @@ services:
     hostname: tmp
     shm_size: '28gb'
     volumes:
-      - ./:/workspace:cached
+      - ./:/$PWD/:cached
     environment:
       TZ: Asia/Tokyo
     tty: true
